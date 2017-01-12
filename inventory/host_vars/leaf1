@@ -1,0 +1,7 @@
+loopback_ip: 10.1.1.1
+bgp_managed_ports:
+  - swp1
+  - swp2
+  - swp30
+  - swp31
+  - swp32

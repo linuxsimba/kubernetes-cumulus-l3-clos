@@ -1,0 +1,4 @@
+---
+- hosts: switches
+  roles:
+    - { role: l3-clos, tags: ['l3-clos'] }

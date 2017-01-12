@@ -1,0 +1,5 @@
+- name: reload l2
+  command: ifreload -a
+
+- name: reload l3
+  service: name=quagga state=restarted

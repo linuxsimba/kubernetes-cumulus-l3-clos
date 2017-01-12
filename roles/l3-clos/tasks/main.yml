@@ -1,0 +1,94 @@
+- name: ensure that bgp_managed_ports var is defined
+  fail:
+    msg: |
+      bgp_managed_port var is not defined. see roles/l3-clos/defaults/main.yml
+      for more details
+  when: bgp_managed_ports is not defined
+
+- name: ensure that bgp_managed_ports var is a list
+  fail:
+    msg: |
+      bgp_managed_ports var is a not a list. Must be a list of switch ports
+      see roles/l3-close/defaults/main.yml for more details.
+  when: not (bgp_managed_ports | is_list)
+
+- block:
+  - name: |
+      determine the leaf number of the switch. assumes hostname is as follows
+      xxx-leaf[1-9]?[0-9]*. Example snv-leaf1. something like snv-leaf01 will not
+      work
+    set_fact:
+      leaf_ip_suffix: "{{ ansible_hostname.split('leaf')[1] }}"
+
+  - name: set loopback address
+    set_fact:
+      loopback_ip: "{{ leaf_prefix }}.{{leaf_ip_suffix}}"
+
+  - name: set BGP asn number
+    set_fact:
+       bgp_asn: "{{ leaf_asn_start + leaf_ip_suffix|int }}"
+
+  when: "{{ 'leaf' in ansible_hostname }}"
+
+- block:
+  - name: |
+      determine the spine number of the switch. assumes hostname is as follows
+      /[a-z0-9]*-spine[1-9]?[0-9]*/. Example snv-spine1. something like snv-spine02 will not
+      work
+    set_fact:
+      spine_ip_suffix: "{{ ansible_hostname.split('spine')[1] }}"
+
+  - name: set loopback address
+    set_fact:
+      loopback_ip: "{{ spine_prefix }}.{{spine_ip_suffix}}"
+
+  - name: set BGP asn number
+    set_fact:
+       bgp_asn: "{{ spine_asn_start + spine_ip_suffix|int }}"
+
+  when: "{{ 'spine' in ansible_hostname }}"
+
+
+- name: ensure that the loopback address is an ip address
+  fail:
+    msg: |
+      loopback_ip var cannot be determined from the hostname. review
+      the hostname and look at the l3-clos/tasks/main.yml to see how the
+      loopback_ip is determined.
+  when: not (loopback_ip | ipaddr)
+
+
+- name: configure l2 interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload l2
+
+- name: enable BGP in quagga
+  copy:
+    src: daemons
+    dest: /etc/quagga/daemons
+    owner: quagga
+    group: quagga
+    mode: 0644
+  notify: reload l3
+
+- name: configure BGP config in quagga.conf
+  template:
+    src: Quagga.conf.j2
+    dest: /etc/quagga/Quagga.conf
+    owner: quagga
+    group: quagga
+    mode: 0644
+  notify: reload l3
+
+- block:
+    - name: restart l2
+      command: ifquery -a
+
+    - name: restart l3
+      service: name=quagga state=restarted
+  when: force_net_restart is defined
