@@ -33,3 +33,34 @@
     group: root
     mode: 0644
   notify: reload sysctl
+
+- name: enable BGP in quagga
+  copy:
+    src: daemons
+    dest: /etc/quagga/daemons
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload l3
+
+- name: configure BGP config in quagga.conf
+  template:
+    src: Quagga.conf.j2
+    dest: /etc/quagga/Quagga.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload l3
+
+- name: install Quagga container
+  docker_container:
+    name: quagga
+    image: linuxsimba/quagga:xenial-latest
+    privileged: yes
+    network_mode: host
+    tty: yes
+    volumes:
+      - /etc/quagga/Quagga.conf:/etc/quagga/Quagga.conf
+      - /etc/quagga/daemons:/etc/quagga/daemons
+
+

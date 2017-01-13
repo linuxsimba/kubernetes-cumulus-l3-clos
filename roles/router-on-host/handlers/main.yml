@@ -3,3 +3,6 @@
 
 - name: reload sysctl
   command: sysctl --system
+
+- name: reload l3
+  command: docker restart quagga
