@@ -1,0 +1,4 @@
+k8s_asn_start: 65800
+
+# up to 254 hosts can be configured this way.
+k8s_ip_prefix: 10.1.3

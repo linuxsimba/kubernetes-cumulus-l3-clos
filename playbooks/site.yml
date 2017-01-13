@@ -2,3 +2,7 @@
 - hosts: switches
   roles:
     - { role: l3-clos, tags: ['l3-clos'] }
+
+- hosts: host
+  roles:
+    - { role: router-on-host, tags: ['roh'] }

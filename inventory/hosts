@@ -24,11 +24,11 @@ leaf
 
 
 [host]
-k8s-08 ansible_host=192.168.200.27 ansible_user=root
-k8s-03 ansible_host=192.168.200.22 ansible_user=root
-k8s-02 ansible_host=192.168.200.21 ansible_user=root
-k8s-01 ansible_host=192.168.200.20 ansible_user=root
-k8s-07 ansible_host=192.168.200.26 ansible_user=root
-k8s-06 ansible_host=192.168.200.25 ansible_user=root
-k8s-05 ansible_host=192.168.200.24 ansible_user=root
-k8s-04 ansible_host=192.168.200.23 ansible_user=root
+k8s8 ansible_host=192.168.200.27 ansible_user=root
+k8s3 ansible_host=192.168.200.22 ansible_user=root
+k8s2 ansible_host=192.168.200.21 ansible_user=root
+k8s1 ansible_host=192.168.200.20 ansible_user=root
+k8s7 ansible_host=192.168.200.26 ansible_user=root
+k8s6 ansible_host=192.168.200.25 ansible_user=root
+k8s5 ansible_host=192.168.200.24 ansible_user=root
+k8s4 ansible_host=192.168.200.23 ansible_user=root

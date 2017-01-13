@@ -1,0 +1,35 @@
+- block:
+  - name: |
+      determine the host number of the server. assumes hostname is as follows
+      /[a-z0-9]*-k8s[1-9]?[0-9]*/. Example snv-k8s1. something like snv-k8s02 will not
+      work
+    set_fact:
+      k8s_ip_suffix: "{{ ansible_hostname.split('k8s')[1] }}"
+
+  - name: set loopback address
+    set_fact:
+      loopback_ip: "{{ k8s_ip_prefix }}.{{k8s_ip_suffix}}"
+
+  - name: set BGP asn number
+    set_fact:
+       bgp_asn: "{{ k8s_asn_start  + k8s_ip_suffix|int }}"
+
+  when: "{{ 'k8s' in ansible_hostname }}"
+
+- name: configure l2 interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload l2
+
+- name: adjust sysctl to support router on a host
+  copy:
+    src: 99quagga_defaults.conf
+    dest: /etc/sysctl.d/99quagga_defaults.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload sysctl
