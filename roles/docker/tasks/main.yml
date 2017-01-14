@@ -1,188 +1,86 @@
 ---
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version|lower|replace('/', '_') }}.yml"
+      - "{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+      - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version|lower|replace('/', '_') }}.yml"
+      - "{{ ansible_distribution|lower }}.yml"
+      - "{{ ansible_os_family|lower }}.yml"
+      - defaults.yml
+      paths:
+      - ../vars
+      skip: true
+  tags: facts
 
-- name: Get upstream APT GPG key
-  apt_key:
-    id: '{{ docker__upstream_key }}'
-    keyserver: '{{ ansible_local.core.keyserver
-                   if (ansible_local|d() and ansible_local.core|d() and
-                       ansible_local.core.keyserver)
-                   else "hkp://pool.sks-keyservers.net" }}'
-    state: 'present'
-  when: docker__upstream|d() | bool
+- include: set_facts_dns.yml
+  when: dns_mode != 'none' and resolvconf_mode == 'docker_dns'
+  tags: facts
 
-- name: Configure upstream APT repository
-  apt_repository:
-    repo: '{{ docker__upstream_repository }}'
-    state: 'present'
-    update_cache: True
-  when: docker__upstream|d() | bool
+- name: check for minimum kernel version
+  fail:
+    msg: >
+          docker requires a minimum kernel version of
+          {{ docker_kernel_min_version }} on
+          {{ ansible_distribution }}-{{ ansible_distribution_version }}
+  when: (not ansible_os_family in ["CoreOS", "Container Linux by CoreOS"]) and (ansible_kernel|version_compare(docker_kernel_min_version, "<"))
+  tags: facts
 
-- name: Remove other version if upstream is modified
-  apt:
-    name: '{{ item }}'
-    state: 'absent'
-    install_recommends: False
-  register: docker__register_other_version_removed
-  with_flattened:
-    - '{{ "docker.io" if docker__upstream|d() else "docker-engine" }}'
+- name: ensure docker repository public key is installed
+  action: "{{ docker_repo_key_info.pkg_key }}"
+  args:
+    id: "{{item}}"
+    keyserver: "{{docker_repo_key_info.keyserver}}"
+    state: present
+  register: keyserver_task_result
+  until: keyserver_task_result|success
+  retries: 4
+  delay: "{{ retry_stagger | random + 3 }}"
+  with_items: "{{ docker_repo_key_info.repo_keys }}"
+  when: not ansible_os_family in ["CoreOS", "Container Linux by CoreOS"]
 
-- name: Remove custom systemd startup file if present
-  file:
-    path: '/etc/systemd/system/docker.service'
-    state: 'absent'
-  tags: [ 'role::docker:config' ]
-  when: (ansible_service_mgr == 'systemd' and
-         docker__register_other_version_removed|changed)
+- name: ensure docker repository is enabled
+  action: "{{ docker_repo_info.pkg_repo }}"
+  args:
+    repo: "{{item}}"
+    state: present
+  with_items: "{{ docker_repo_info.repos }}"
+  when: (not ansible_os_family in ["CoreOS", "Container Linux by CoreOS"]) and (docker_repo_info.repos|length > 0)
 
-- name: Install required packages
-  apt:
-    name: '{{ item }}'
-    state: 'present'
-    install_recommends: False
-  with_flattened:
-    - '{{ "docker-engine" if docker__upstream|d() else "docker.io" }}'
-    - '{{ docker__base_packages }}'
-    - '{{ docker__packages }}'
-
-- name: Install ferment generator
-  pip:
-    name: 'ferment'
-    state: 'present'
-  when: docker__ferment|d() | bool
-
-- name: Install ferment wrapper script
-  template:
-    src: 'usr/local/lib/docker-ferment-wrapper.j2'
-    dest: '{{ docker__ferment_wrapper }}'
-    owner: 'root'
-    group: 'root'
-    mode: '0755'
-  when: docker__ferment|d() | bool
-
-- name: Install ferm post hook
+- name: Configure docker repository on RedHat/CentOS
   copy:
-    src: 'etc/ferm/hooks/post.d/restart-docker'
-    dest: '/etc/ferm/hooks/post.d/restart-docker'
-    owner: 'root'
-    group: 'root'
-    mode: '0755'
-  when: ((ferm__enabled|d() | bool) and (docker__ferment|d() | bool == False))
+    src: "rh_docker.repo"
+    dest: "/etc/yum.repos.d/docker.repo"
+  when: ansible_distribution in ["CentOS","RedHat"]
 
-- name: Check Docker version
-  environment:
-    LC_MESSAGES: 'C'
-  shell: dpkg-query -W -f='${Version}\n' '{{ ("docker-engine" if docker__upstream|d() else "docker.io") }}' | cut -d- -f1
-  register: docker__register_version
-  changed_when: False
-  failed_when: False
-  tags: [ 'role::docker:config' ]
+- name: ensure docker packages are installed
+  action: "{{ docker_package_info.pkg_mgr }}"
+  args:
+    pkg: "{{item.name}}"
+    force: "{{item.force|default(omit)}}"
+    state: present
+  register: docker_task_result
+  until: docker_task_result|success
+  retries: 4
+  delay: "{{ retry_stagger | random + 3 }}"
+  with_items: "{{ docker_package_info.pkgs }}"
+  when: (not ansible_os_family in ["CoreOS", "Container Linux by CoreOS"]) and (docker_package_info.pkgs|length > 0)
 
-- name: Configure Docker options
-  template:
-    src: 'etc/default/docker.j2'
-    dest: '/etc/default/docker'
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
-  notify: [ 'reload systemctl','Restart docker' ]
-  tags: [ 'role::docker:config' ]
-  when: (ansible_service_mgr != 'systemd' or docker__register_version.stdout | version_compare('1.10', '<'))
+- name: check minimum docker version for docker_dns mode. You need at least docker version >= 1.12 for resolvconf_mode=docker_dns
+  shell: docker version -f "{{ '{{' }}.Client.Version{{ '}}' }}"
+  register: docker_version
+  failed_when: docker_version.stdout|version_compare('1.12', '<')
+  changed_when: false
+  when: dns_mode != 'none' and resolvconf_mode == 'docker_dns'
 
-- name: Remove Upstart docker configuration file
-  file:
-    path: '/etc/default/docker'
-    state: 'absent'
-  tags: [ 'role::docker:config' ]
-  when: (ansible_service_mgr == 'systemd' and docker__register_version.stdout | version_compare('1.10', '>='))
+- name: Set docker systemd config
+  include: systemd.yml
 
-- name: Configure Docker systemd options
-  template:
-    src: 'etc/docker/daemon.json.j2'
-    dest: '/etc/docker/daemon.json'
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
-  notify: [ 'reload systemctl','Restart docker' ]
-  tags: [ 'role::docker:config' ]
-  when: (ansible_service_mgr == 'systemd' and docker__register_version.stdout | version_compare('1.10', '>='))
-
-- name: Remove systemd docker configuration file
-  file:
-    path: '/etc/docker/daemon.json'
-    state: 'absent'
-  tags: [ 'role::docker:config' ]
-  when: (ansible_service_mgr != 'systemd' or docker__register_version.stdout | version_compare('1.10', '<'))
-
-- name: Make sure that systemd directory exists
-  file:
-    path: '/etc/systemd/system'
-    state: 'directory'
-    owner: 'root'
-    group: 'root'
-    mode: '0755'
-  when: ansible_service_mgr == 'systemd'
-  tags: [ 'role::docker:config' ]
-
-- name: Make sure that docker.service.d directory exists
-  file:
-    path: '/etc/systemd/system/docker.service.d'
-    state: 'directory'
-    owner: 'root'
-    group: 'root'
-    mode: '0755'
-  when: (ansible_service_mgr == 'systemd' and
-        (docker__env_http_proxy is defined or docker__env_https_proxy is defined))
-  tags: [ 'role::docker:config' ]
-
-- name: Install Debian systemd service unit
-  template:
-    src: 'etc/systemd/system/docker.service.j2'
-    dest: '/etc/systemd/system/docker.service'
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
-  register: docker__register_systemd_service
-  when: ansible_service_mgr == 'systemd'
-  tags: [ 'role::docker:config' ]
-
-- name: Configure Docker proxy
-  template:
-    src: 'etc/systemd/system/docker.service.d/http-proxy.conf.j2'
-    dest: '/etc/systemd/system/docker.service.d/http-proxy.conf'
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
-  register: docker__register_systemd_proxy_present
-  when: (ansible_service_mgr == 'systemd' and
-        (docker__env_http_proxy is defined or docker__env_https_proxy is defined))
-  tags: [ 'role::docker:config' ]
-
-- name: Remove Docker proxy configuration
-  file:  path='/etc/systemd/system/docker.service.d/http-proxy.conf' state=absent
-  register: docker__register_systemd_proxy_absent
-  when: (ansible_service_mgr == 'systemd' and not
-        (docker__env_http_proxy is defined or docker__env_https_proxy is defined))
-  tags: [ 'role::docker:config' ]
-
-- name: Reload systemd daemons
-  command: systemctl daemon-reload
-  notify: [ 'reload systemctl','Restart docker']
-  when: ((ansible_local|d() and ansible_local.init|d() and
-          ansible_local.init == 'systemd') and
-         ((docker__register_systemd_service|d() and
-         docker__register_systemd_service|changed) or
-         (docker__register_systemd_proxy_present|d() and
-         docker__register_systemd_proxy_present|changed) or
-         (docker__register_systemd_proxy_absent|d() and
-         docker__register_systemd_proxy_absent|changed)))
-  tags: [ 'role::docker:config' ]
-
-- name: Add specified users to 'docker' group
-  user:
-    name: '{{ item }}'
-    groups: 'docker'
-    append: True
-  with_items: '{{ docker__admins }}'
-  when: item|d()
-  tags: [ 'role::docker:config', 'role::docker:admins' ]
-
+- name: ensure docker service is started and enabled
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - docker

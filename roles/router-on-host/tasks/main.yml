@@ -34,6 +34,9 @@
     mode: 0644
   notify: reload sysctl
 
+- name: create the /etc/quagga folder on the hypervisor
+  file: path=/etc/quagga state=directory
+
 - name: enable BGP in quagga
   copy:
     src: daemons
@@ -52,6 +55,12 @@
     mode: 0644
   notify: reload l3
 
+- name: install pip so that you can do pip install docker.py
+  apt: name=python-pip
+
+- name: install docker.py so that docker_container ansible keyword will work
+  pip: name=docker-py
+
 - name: install Quagga container
   docker_container:
     name: quagga
@@ -59,6 +68,7 @@
     privileged: yes
     network_mode: host
     tty: yes
+    restart_policy: always
     volumes:
       - /etc/quagga/Quagga.conf:/etc/quagga/Quagga.conf
       - /etc/quagga/daemons:/etc/quagga/daemons
