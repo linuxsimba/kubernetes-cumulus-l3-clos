@@ -16,6 +16,9 @@
 
   when: "{{ 'k8s' in ansible_hostname }}"
 
+- name: install bridge utils
+  apt: name=bridge-utils
+
 - name: configure l2 interfaces
   template:
     src: interfaces.j2
@@ -72,5 +75,4 @@
     volumes:
       - /etc/quagga/Quagga.conf:/etc/quagga/Quagga.conf
       - /etc/quagga/daemons:/etc/quagga/daemons
-
 
