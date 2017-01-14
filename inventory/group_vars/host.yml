@@ -1,0 +1,30 @@
+network_manage_devices: yes
+network_restart_method: interface
+
+network_interfaces:
+  - device: eth0
+    description: Out of band interface
+    auto: true
+    family: inet
+    method: dhcp
+
+  - device: eth1
+    description: data connection to data plane
+    auto: true
+    family: inet
+    method: manual
+    up:
+      - ip link set eth1 up
+    down:
+      - ip link set eth1 down
+
+
+  - device: quaggaip
+    description: interface quagga binds to
+    auto: true
+    family: inet
+    method: static
+    address: "{{ loopback_ip }}"
+    netmask: 255.255.255.255
+    pre-up:
+    - "if [ ! -e /sys/class/net/quaggaip ];then ip link add quaggaip type dummy; fi"

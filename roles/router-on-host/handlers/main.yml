@@ -1,6 +1,3 @@
-- name: reload l2
-  command: ifreload -a
-
 - name: reload sysctl
   command: sysctl --system
 
