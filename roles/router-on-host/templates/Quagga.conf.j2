@@ -21,6 +21,9 @@ router bgp {{ bgp_asn }}
   neighbor eth1 interface peer-group fabric
 
   address-family ipv4 unicast
-     redistribute connected
+     redistribute connected route-map LOOPBACK
      neighbor fabric activate
   exit-address-family
+!
+route-map LOOPBACK permit 10
+  match interface lo
