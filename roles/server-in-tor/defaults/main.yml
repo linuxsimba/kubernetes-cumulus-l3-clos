@@ -1,0 +1,8 @@
+# Define the tor facing IP address. Include the prefix
+# Example 10.1.1.1/24. Put this in the inventory_hosts entry
+#tor_facing_ip: ""
+
+## Set the gateway. define this gateway in each inventor_hosts entry for the
+#server
+#tor_gw: ""
+

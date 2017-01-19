@@ -20,3 +20,11 @@ auto {{ iface }}
 iface {{ iface }}
   vrf k8s
 {% endfor %}
+
+
+{% if svi_ifaces|length > 0 %}
+auto toredge-svi
+iface toredge-svi
+  address {{ svi_ip }}
+  bridge_ports {{ svi_ifaces | join(" ") }}
+{% endif %}

@@ -14,3 +14,10 @@ leaf_asn_start: 65100
 
 # spine ASN starting point
 spine_asn_start: 65500
+
+# ports associated to leaf svi interface
+svi_ifaces: []
+
+# svi IP that all TOR devices connect to
+# define this in host vars or on the inventory group entry of the leaf
+# svi_ip: ""

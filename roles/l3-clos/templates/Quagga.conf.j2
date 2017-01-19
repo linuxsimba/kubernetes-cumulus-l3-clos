@@ -11,6 +11,10 @@ router bgp {{ bgp_asn }} vrf k8s
   bgp bestpath compare-routerid
   bgp default show-hostname
   bgp router-id {{ loopback_ip }}
+  {% if svi_ip is defined }}
+  network {{ svi_ip }}
+  {% endif %}
+  network {{ loopback_ip }}/32
   maximum-paths 64
   bgp bestpath as-path multipath-relax
   neighbor fabric peer-group
@@ -25,6 +29,5 @@ router bgp {{ bgp_asn }} vrf k8s
 {% endfor %}
 
   address-family ipv4 unicast
-     redistribute connected
      neighbor fabric activate
   exit-address-family

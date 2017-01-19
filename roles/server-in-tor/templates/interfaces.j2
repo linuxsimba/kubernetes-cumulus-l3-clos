@@ -1,0 +1,14 @@
+auto lo
+iface lo inet loopback
+   address {{ loopback_ip}}/32
+
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1
+  address {{ tor_facing_ip }}
+  gateway {{ tor_gw }}
+
+auto vagrant
+iface vagrant
