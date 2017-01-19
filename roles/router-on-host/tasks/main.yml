@@ -74,5 +74,8 @@
     restart_policy: always
     volumes:
       - /etc/quagga/Quagga.conf:/etc/quagga/Quagga.conf
-      - /etc/quagga/daemons:/etc/quagga/daemons
+      - /etc/quagga/daemons:/etc/quagga/daemonsregister: task_result
+  until: task_result.failed is not defined
+  retries: 4
+  delay: 1
 
