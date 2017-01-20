@@ -5,4 +5,4 @@
 
 - hosts: host
   roles:
-    - { role: router-on-host, tags: ['roh'] }
+    - { role: server-in-tor, tags: ['sot'] }

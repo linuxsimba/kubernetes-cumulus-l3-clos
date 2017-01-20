@@ -26,5 +26,6 @@ iface {{ iface }}
 auto toredge-svi
 iface toredge-svi
   address {{ svi_ip }}
-  bridge_ports {{ svi_ifaces | join(" ") }}
+  bridge_ports {{ svi_ifaces |join(" ")}}
+  vrf k8s
 {% endif %}

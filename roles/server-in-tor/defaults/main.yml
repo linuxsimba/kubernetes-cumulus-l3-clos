@@ -3,6 +3,6 @@
 #tor_facing_ip: ""
 
 ## Set the gateway. define this gateway in each inventor_hosts entry for the
-#server
+#server. Example "10.1.1.254"
 #tor_gw: ""
 

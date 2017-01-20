@@ -1,2 +1,3 @@
 *.retry
-
+Session.vim
+*.pyc
