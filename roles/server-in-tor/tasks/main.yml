@@ -12,3 +12,12 @@
 
 - name: install docker.py so that docker_container ansible keyword will work
   pip: name=docker-py
+
+- name: adjust sysctl to optimize L3 routing on the server
+  copy:
+    src: 99quagga_defaults.conf
+    dest: /etc/sysctl.d/99quagga_defaults.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload sysctl
