@@ -23,9 +23,9 @@ iface {{ iface }}
 
 
 {% if svi_ifaces|length > 0 %}
-auto toredge-svi
-iface toredge-svi
+auto toredge-br
+iface toredge-br
   address {{ svi_ip }}
-  bridge_ports {{ svi_ifaces |join(" ")}}
+  bridge_ports {{ svi_ifaces | join(" ")}}
   vrf k8s
 {% endif %}

@@ -24,10 +24,17 @@ router bgp {{ bgp_asn }} vrf k8s
   neighbor fabric timers connect 3
   neighbor fabric remote-as external
   neighbor fabric capability extended-nexthop
+  neighbor k8s_host peer-group
+  neighbor k8s_host description Calico router reflector
+  neighbor k8s_host route-reflector-client
+  neighbor k8s_host next-hop-self
+  neighbor k8s_host remote-as {{ bgp_asn }}
 {% for iface in bgp_managed_ports %}
   neighbor {{iface}} interface peer-group fabric
 {% endfor %}
-
+{% for k8s_ip in k8s_ips %}
+  neighbor {{ k8s_ip }}  peer-group k8s_host
+{% endfor %}
   address-family ipv4 unicast
      neighbor fabric activate
   exit-address-family

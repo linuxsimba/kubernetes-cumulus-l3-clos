@@ -15,9 +15,14 @@ leaf_asn_start: 65100
 # spine ASN starting point
 spine_asn_start: 65500
 
-# ports associated to leaf svi interface
+# ports associated to leaf toredge-br SVI interface
 svi_ifaces: []
 
+# ports associated with leaf k8s ports
 # svi IP that all TOR devices connect to
 # define this in host vars or on the inventory group entry of the leaf
 # svi_ip: ""
+
+# List of router IPs of k8s hosts acting of router reflector clients
+# Example k8s_ips: ['192.168.1.1', '192.168.1.2']
+k8s_ips: []

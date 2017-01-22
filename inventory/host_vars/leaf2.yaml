@@ -1,4 +1,4 @@
-loopback_ip: 10.1.1.1
+svi_ip: 10.90.2.1
 bgp_managed_ports:
   - swp30
   - swp31
@@ -6,3 +6,6 @@ bgp_managed_ports:
 svi_ifaces:
   - swp1
   - swp2
+k8s_ips:
+  - 10.90.2.2
+  - 10.90.2.3

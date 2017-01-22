@@ -7,7 +7,7 @@ iface eth0 inet dhcp
 auto eth1
 iface eth1
   address {{ tor_facing_ip }}
-  gateway {{ tor_gw }}
+  up ip route add 10.90.0.0/16 via {{ gw }}
 
 auto vagrant
 iface vagrant
