@@ -26,7 +26,6 @@ router bgp {{ bgp_asn }} vrf k8s
   neighbor fabric capability extended-nexthop
   neighbor k8s_host peer-group
   neighbor k8s_host description Calico router reflector
-  neighbor k8s_host route-reflector-client
   neighbor k8s_host next-hop-self
   neighbor k8s_host remote-as {{ bgp_asn }}
 {% for iface in bgp_managed_ports %}
@@ -37,4 +36,6 @@ router bgp {{ bgp_asn }} vrf k8s
 {% endfor %}
   address-family ipv4 unicast
      neighbor fabric activate
+     neighbor k8s_host activate
+     neighbor k8s_host route-reflector-client
   exit-address-family

@@ -10,8 +10,8 @@
 - name: install pip so that you can do pip install docker.py
   apt: name=python-pip
 
-- name: install docker.py so that docker_container ansible keyword will work
-  pip: name=docker-py
+- name: install netshow for troubleshooting
+  pip: name=netshow-linux-lib
 
 - name: adjust sysctl to optimize L3 routing on the server
   copy:
