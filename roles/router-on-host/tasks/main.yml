@@ -1,11 +1,3 @@
-- name: adjust sysctl to support router on a host
-  copy:
-    src: 99quagga_defaults.conf
-    dest: /etc/sysctl.d/99quagga_defaults.conf
-    owner: root
-    group: root
-    mode: 0644
-  notify: reload sysctl
 
 - name: create the /etc/quagga folder on the hypervisor
   file: path=/etc/quagga state=directory
@@ -28,11 +20,20 @@
     mode: 0644
   notify: reload l3
 
-- name: install pip so that you can do pip install docker.py
+- name: adjust sysctl to support router on a host
+  copy:
+    src: 99quagga_defaults.conf
+    dest: /etc/sysctl.d/99quagga_defaults.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload sysctl
+
+- name: install pip
   apt: name=python-pip
 
-- name: install docker.py so that docker_container ansible keyword will work
-  pip: name=docker-py
+- name: install netshow for troubleshooting
+  pip: name=netshow-linux-lib
 
 - name: install Quagga container
   docker_container:

@@ -2,4 +2,4 @@
 dependencies:
   - { role: 'docker' }
   - { role: 'router-on-host-facts' }
-  - { role: 'ansible-network-interfaces' }
+  - { role: 'ifupdown2' }

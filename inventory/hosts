@@ -5,17 +5,17 @@
 
 
 [leaf]
-leaf4 ansible_host=192.168.200.13 ansible_user=root
-leaf1 ansible_host=192.168.200.10 ansible_user=root
-leaf3 ansible_host=192.168.200.12 ansible_user=root
-leaf2 ansible_host=192.168.200.11 ansible_user=root
+leaf1 ansible_host=192.168.200.10
+leaf2 ansible_host=192.168.200.11
+leaf3 ansible_host=192.168.200.12
+leaf4 ansible_host=192.168.200.13
 
 
 
 [spine]
-spine1 ansible_host=192.168.200.14 ansible_user=root
-spine3 ansible_host=192.168.200.16 ansible_user=root
-spine2 ansible_host=192.168.200.15 ansible_user=root
+spine1 ansible_host=192.168.200.14
+spine2 ansible_host=192.168.200.15
+spine3 ansible_host=192.168.200.16
 
 [switches:children]
 spine
@@ -24,11 +24,11 @@ leaf
 
 
 [host]
-k8s8 ansible_host=192.168.200.27 ansible_user=root
-k8s3 ansible_host=192.168.200.22 ansible_user=root
-k8s2 ansible_host=192.168.200.21 ansible_user=root
-k8s1 ansible_host=192.168.200.20 ansible_user=root
-k8s7 ansible_host=192.168.200.26 ansible_user=root
-k8s6 ansible_host=192.168.200.25 ansible_user=root
-k8s5 ansible_host=192.168.200.24 ansible_user=root
-k8s4 ansible_host=192.168.200.23 ansible_user=root
+k8s8 ansible_host=192.168.200.27
+k8s3 ansible_host=192.168.200.22
+k8s2 ansible_host=192.168.200.21
+k8s1 ansible_host=192.168.200.20
+k8s7 ansible_host=192.168.200.26
+k8s6 ansible_host=192.168.200.25
+k8s5 ansible_host=192.168.200.24
+k8s4 ansible_host=192.168.200.23

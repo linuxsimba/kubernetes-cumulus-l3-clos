@@ -1,9 +1,0 @@
-#used by docker role
- pip_version_pip: 8.1.2
- pip_version_setuptools: 23.1.0
- pip_version_docker_py: 1.10.6
- pip_version_docker_compose: 1.9.0
- docker_opts: >
-   --ip=192.168.1.1/24
-     --fixed-cidr=192.168.1.0/24
-
