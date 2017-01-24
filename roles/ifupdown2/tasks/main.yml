@@ -1,0 +1,21 @@
+- name: copy ifupdown2 from dec 2016
+  copy: src=ifupdown2.deb dest=/tmp/ifupdown2.deb
+
+
+- name: install ifupdown2 dependencies
+  apt: name="{{ item }}"
+  with_items:
+    - python-argcomplete
+    - python-ipaddr
+    - python-pkg-resources
+
+
+- name: install stock ifupdown2
+  apt: name='ifupdown2' update_cache=yes
+
+- name: remove /etc/default/networking directory
+  file: path=/etc/default/networking state=absent
+
+- name: install latest ifupdown2 from ansible repo
+  apt:
+    deb: "/tmp/ifupdown2.deb"
