@@ -1,4 +1,3 @@
-
 - name: create the /etc/quagga folder on the hypervisor
   file: path=/etc/quagga state=directory
 
@@ -31,6 +30,9 @@
 
 - name: install pip
   apt: name=python-pip
+
+- name: install docker-py so that docker_container ansible keyword works
+  pip: name=docker-py
 
 - name: install netshow for troubleshooting
   pip: name=netshow-linux-lib
