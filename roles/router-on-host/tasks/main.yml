@@ -1,3 +1,13 @@
+- name: configure l2 interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload l2
+
+
 - name: create the /etc/quagga folder on the hypervisor
   file: path=/etc/quagga state=directory
 

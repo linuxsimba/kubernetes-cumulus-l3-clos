@@ -1,5 +1,8 @@
 - name: reload sysctl
   command: sysctl --system
 
+- name: reload l2
+  command: ifreload -a
+
 - name: reload l3
   command: docker restart quagga
