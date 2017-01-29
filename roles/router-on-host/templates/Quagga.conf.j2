@@ -22,8 +22,15 @@ router bgp {{ bgp_asn }}
 
   address-family ipv4 unicast
      redistribute connected route-map LOOPBACK
+     redistribute kernel route-map K8SROUTES
      neighbor fabric activate
   exit-address-family
 !
+access-list LOOPBACK permit {{ k8s_ip_prefix }}.0/24
+access-list K8SROUTES permit {{ kube_pods_subnet }}
+!
 route-map LOOPBACK permit 10
-  match interface lo
+  match ip address LOOPBACK
+!
+route-map K8SROUTES permit 10
+  match ip address K8SROUTES

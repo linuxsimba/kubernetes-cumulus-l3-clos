@@ -28,6 +28,7 @@
     group: root
     mode: 0644
   notify: reload l3
+  tags: 'quagga'
 
 - name: adjust sysctl to support router on a host
   copy:
@@ -62,3 +63,4 @@
   until: task_result.failed is not defined
   retries: 4
   delay: 1
+  tags: 'quagga'
