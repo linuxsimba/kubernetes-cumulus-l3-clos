@@ -1,7 +1,5 @@
 bgp_managed_ports:
   - swp1
   - swp2
-  - swp30
-  - swp31
   - swp32
 

@@ -1,5 +1,3 @@
 bgp_managed_ports:
   - swp1
   - swp2
-  - swp3
-  - swp4

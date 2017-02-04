@@ -28,6 +28,7 @@ router bgp {{ bgp_asn }}
 !
 access-list LOOPBACK permit {{ k8s_ip_prefix }}.0/24
 access-list K8SROUTES permit {{ kube_pods_subnet }}
+access-list K8SROUTES permit {{ openstack_tenant_net }} 
 !
 route-map LOOPBACK permit 10
   match ip address LOOPBACK

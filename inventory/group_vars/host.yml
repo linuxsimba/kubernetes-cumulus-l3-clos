@@ -1,6 +1,8 @@
 # Prefix of addresses used to create k8s pods
 kube_pods_subnet: 10.233.64.0/18
 
+openstack_tenant_net: 10.65.0.0/16
+
 # Can be dnsmasq_kubedns, kubedns or none
 dns_mode: none
 
