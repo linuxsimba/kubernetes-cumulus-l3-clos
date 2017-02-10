@@ -32,15 +32,18 @@
 
     - name: check that leaf, spine and k8s nodes are up
       shell: ansible -m ping all
+      args:
         chdir: /home/vagrant/k8s-l3-clos
 
 
     - name: run l3-clos install on the switches
       shell: ansible-playbook playbooks/site.yml -l switches
+      args:
         chdir: /home/vagrant/k8s-l3-clos
 
     - name: run router on a host setup on the hosts
       shell: ansible-playbook playbooks/site.yml -l hosts
+      args:
         chdir: /home/vagrant/k8s-l3-clos
 
 
@@ -49,6 +52,7 @@
 
     - name: check that servers have come back up
       shell: ansible -m command ping
+      args:
         chdir: /home/vagrant/k8s
       register: task_result
       until: task_result.failed is not defined
