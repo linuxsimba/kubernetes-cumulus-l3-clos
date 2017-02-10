@@ -1,0 +1,62 @@
+---
+- hosts: all
+  tasks:
+    - name: install README.md.oob-mgmt-server
+      copy:
+        src: README.md.oob-mgmt-server
+        dest: /home/vagrant/README.md
+
+
+    - name: git clone kargo
+      git:
+        repo: "https://github.com/linuxsimba/kargo"
+        version: 1s2l3s-setup
+        dest: /home/vagrant/kargo
+    - name: git clone kubernetes l3-clos repo
+      git:
+        repo: "https://github.com/linuxsimba/kubernetes-cumulus-l3-clos"
+        version: roh-ifupdown2-1s2l3s
+        dest: /home/vagrant/k8s-l3-clos
+
+    - name: create ssh key
+      user: name=vagrant generate_ssh_key=yes
+
+    - name: copy kargo ssh keys
+      copy:
+        src: "{{item}}"
+        dest: "/home/vagrant/{{item}}/.ssh"
+        mode: 0400
+      with_items:
+        - kargo-test.priv
+        - kargo-test.pub
+
+    - name: check that leaf, spine and k8s nodes are up
+      shell: ansible -m ping all
+        chdir: /home/vagrant/k8s-l3-clos
+
+
+    - name: run l3-clos install on the switches
+      shell: ansible-playbook playbooks/site.yml -l switches
+        chdir: /home/vagrant/k8s-l3-clos
+
+    - name: run router on a host setup on the hosts
+      shell: ansible-playbook playbooks/site.yml -l hosts
+        chdir: /home/vagrant/k8s-l3-clos
+
+
+    - name: reboot all k8s hosts
+      shell: ansible -m command -a "shutdown -r 1" -l hosts
+
+    - name: check that servers have come back up
+      shell: ansible -m command ping
+        chdir: /home/vagrant/k8s
+      register: task_result
+      until: task_result.failed is not defined
+      retries: 4
+      delay: 10
+
+    - name: install k8s using kargo
+      shell: ansible-playbook cluster.yml
+
+    - debug: msg="type vagrant ssh oob-mgmt-server. follow instructions in README.md on the server"
+

@@ -1,0 +1,28 @@
+# /etc/dhcp/dhcpd.hosts
+# Created by Topology-Converter v4.5.2
+#    https://github.com/cumulusnetworks/topology_converter
+#    using topology data from: topology.dot
+
+group {
+
+  option domain-name-servers 192.168.200.254;
+  option domain-name "simulation";
+  #option routers 192.168.200.254;
+  option www-server 192.168.200.254;
+  option default-url = "http://192.168.200.254/onie-installer";
+
+ host spine1 {hardware ethernet 44:38:39:00:00:0e; fixed-address 192.168.200.3; option host-name "spine1"; option cumulus-provision-url "http://192.168.200.254/ztp_oob.sh";  } 
+
+ host leaf1 {hardware ethernet 44:38:39:00:00:10; fixed-address 192.168.200.1; option host-name "leaf1"; option cumulus-provision-url "http://192.168.200.254/ztp_oob.sh";  } 
+
+ host leaf2 {hardware ethernet 44:38:39:00:00:12; fixed-address 192.168.200.2; option host-name "leaf2"; option cumulus-provision-url "http://192.168.200.254/ztp_oob.sh";  } 
+
+ host k8s1 {hardware ethernet 44:38:39:00:00:14; fixed-address 192.168.200.4; option host-name "k8s1"; } 
+
+ host k8s2 {hardware ethernet 44:38:39:00:00:16; fixed-address 192.168.200.5; option host-name "k8s2"; } 
+
+ host k8s3 {hardware ethernet 44:38:39:00:00:18; fixed-address 192.168.200.6; option host-name "k8s3"; } 
+
+}#End of static host group
+
+

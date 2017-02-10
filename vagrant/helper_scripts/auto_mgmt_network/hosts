@@ -1,0 +1,22 @@
+# Created by Topology-Converter v4.5.2
+
+
+127.0.0.1 localhost 
+127.0.1.1 oob-mgmt-server
+
+
+192.168.200.254 oob-mgmt-server 
+
+
+192.168.200.3 spine1
+192.168.200.1 leaf1
+192.168.200.2 leaf2
+192.168.200.4 k8s1
+192.168.200.5 k8s2
+192.168.200.6 k8s3
+
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
