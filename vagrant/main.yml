@@ -34,6 +34,10 @@
       shell: ansible -m ping all
       args:
         chdir: /home/vagrant/k8s-l3-clos
+      register: task_result
+      until: task_result.failed is not defined
+      retries: 4
+      delay: 10
 
 
     - name: run l3-clos install on the switches
@@ -55,7 +59,7 @@
       shell: ansible -m command -a "shutdown -r 1" -l hosts
 
     - name: check that servers have come back up
-      shell: ansible -m command ping
+      shell: ansible -m ping all
       args:
         chdir: /home/vagrant/k8s
       register: task_result
