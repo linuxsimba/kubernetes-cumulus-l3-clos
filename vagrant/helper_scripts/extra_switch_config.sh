@@ -30,6 +30,9 @@ chmod 400 /root/.ssh/authorized_keys
 #add line to support bonding inside virtualbox VMs
 #sed -i '/.*iface swp.*/a\    #required for traffic to flow on Bonds in Vbox VMs\n    post-up ip link set $IFACE promisc on' /etc/network/interfaces
 
+echo "reboot server"
+shutdown -r 1
+
 echo "#################################"
 echo "   Finished"
 echo "#################################"

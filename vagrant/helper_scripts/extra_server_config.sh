@@ -57,6 +57,8 @@ auto eth0
 iface eth0 inet dhcp
 EOF
 
+echo "reboot PC"
+shutdown -r 1
 echo "#################################"
 echo "   Finished"
 echo "#################################"
