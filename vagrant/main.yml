@@ -48,10 +48,13 @@
         delay: 10
       when: copied_keys.changed == True
 
+    # TODO check that  oob-mgmt switch is up
+    #
     - name: start up oob mgmt switch
       command: vagrant up oob-mgmt-switch
 
-    - name: startup  the remaining VMs
+    # TODO check that the remaining VMs are up
+    - name: startup the remaining VMs
       command: vagrant up k8s1 k8s2 k8s3 leaf1 leaf2 spine1
 
 
@@ -59,42 +62,41 @@
   tasks:
     - pause: seconds=8
 
+    # This is not working!!! Look is not working
     - name: check that server and switch VMs have come back up
       shell: ansible -m ping all
       args:
         chdir: /home/vagrant/k8s-l3-clos
       register: task_result
-      until: task_result.failed is not defined
+      until: task_result.rc == 0
       retries: 4
       delay: 10
 
+    # Check if playbook is installed on the switches..
     - name: run l3-clos install on the switches
       shell: ansible-playbook playbooks/site.yml -l switches
       args:
         chdir: /home/vagrant/k8s-l3-clos
 
+    # check if quagga is installed on the servers
     - name: run router on a host setup on the hosts
-      shell: ansible-playbook playbooks/site.yml -l hosts
-      args:
-        chdir: /home/vagrant/k8s-l3-clos
-      register: task_result
-      until: task_result.failed is not defined
-      retries: 4
-      delay: 10
+      shell: ansible-playbook playbooks/site.yml -l host
 
-
+    # only do this if the playbook executed succesfully
     - name: reboot all k8s hosts
-      shell: ansible -m shell -a "(sleep 5; reboot)&" -l hosts
+      shell: ansible -m shell -a "(sleep 5; reboot)&" -l host
 
+    # only do this if the playbook was executed successfully
     - name: check that servers have come back up
       shell: ansible -m ping all
       args:
         chdir: /home/vagrant/k8s
       register: task_result
-      until: task_result.failed is not defined
+      until: task_result.rc == 0
       retries: 4
       delay: 10
 
+    # check if kubernetes is installed
     - name: install k8s using kargo
       shell: ansible-playbook cluster.yml
 
