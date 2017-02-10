@@ -45,6 +45,10 @@
       shell: ansible-playbook playbooks/site.yml -l hosts
       args:
         chdir: /home/vagrant/k8s-l3-clos
+      register: task_result
+      until: task_result.failed is not defined
+      retries: 4
+      delay: 10
 
 
     - name: reboot all k8s hosts
