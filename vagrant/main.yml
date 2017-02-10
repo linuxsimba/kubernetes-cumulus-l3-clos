@@ -41,8 +41,8 @@
     - pause: seconds=8
 
     - name: wait for oob-mgmt-server to come back online
-      local_action:
-        wait_for port: 22
+      wait_for:
+        port: 22
         host: "{{ ansible_ssh_host }}"
         delay: 10
       when: copied_keys.changed == True
@@ -53,48 +53,48 @@
     - name: startup  the remaining VMs
       command: vagrant up k8s1 k8s2 k8s3 leaf1 leaf2 spine1
 
-- hosts: all
-  tasks:
-    - pause: seconds=8
-
-    - name: check that server and switch VMs have come back up
-      shell: ansible -m ping all
-      args:
-        chdir: /home/vagrant/k8s-l3-clos
-      register: task_result
-      until: task_result.failed is not defined
-      retries: 4
-      delay: 10
-
-    - name: run l3-clos install on the switches
-      shell: ansible-playbook playbooks/site.yml -l switches
-      args:
-        chdir: /home/vagrant/k8s-l3-clos
-
-    - name: run router on a host setup on the hosts
-      shell: ansible-playbook playbooks/site.yml -l hosts
-      args:
-        chdir: /home/vagrant/k8s-l3-clos
-      register: task_result
-      until: task_result.failed is not defined
-      retries: 4
-      delay: 10
-
-
-    - name: reboot all k8s hosts
-      shell: ansible -m command -a "shutdown -r 1" -l hosts
-
-    - name: check that servers have come back up
-      shell: ansible -m ping all
-      args:
-        chdir: /home/vagrant/k8s
-      register: task_result
-      until: task_result.failed is not defined
-      retries: 4
-      delay: 10
-
-    - name: install k8s using kargo
-      shell: ansible-playbook cluster.yml
-
-    - debug: msg="type vagrant ssh oob-mgmt-server. follow instructions in README.md on the server"
-
+  #- hosts: all
+  #  tasks:
+  #    - pause: seconds=8
+  #
+  #    - name: check that server and switch VMs have come back up
+  #      shell: ansible -m ping all
+  #      args:
+  #        chdir: /home/vagrant/k8s-l3-clos
+  #      register: task_result
+  #      until: task_result.failed is not defined
+  #      retries: 4
+  #      delay: 10
+  #
+  #    - name: run l3-clos install on the switches
+  #      shell: ansible-playbook playbooks/site.yml -l switches
+  #      args:
+  #        chdir: /home/vagrant/k8s-l3-clos
+  #
+  #    - name: run router on a host setup on the hosts
+  #      shell: ansible-playbook playbooks/site.yml -l hosts
+  #      args:
+  #        chdir: /home/vagrant/k8s-l3-clos
+  #      register: task_result
+  #      until: task_result.failed is not defined
+  #      retries: 4
+  #      delay: 10
+  #
+  #
+  #    - name: reboot all k8s hosts
+  #      shell: ansible -m shell -a "(sleep 5; reboot)&" -l hosts
+  #
+  #    - name: check that servers have come back up
+  #      shell: ansible -m ping all
+  #      args:
+  #        chdir: /home/vagrant/k8s
+  #      register: task_result
+  #      until: task_result.failed is not defined
+  #      retries: 4
+  #      delay: 10
+  #
+  #    - name: install k8s using kargo
+  #      shell: ansible-playbook cluster.yml
+  #
+  #    - debug: msg="type vagrant ssh oob-mgmt-server. follow instructions in README.md on the server"
+  #
