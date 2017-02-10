@@ -38,7 +38,7 @@
   connection: local
   gather_facts: false
   tasks:
-    - pause: seconds=5
+    - pause: seconds=8
 
     - name: wait for oob-mgmt-server to come back online
       local_action:
@@ -55,7 +55,7 @@
 
 - hosts: all
   tasks:
-    - pause: seconds=6
+    - pause: seconds=8
 
     - name: check that server and switch VMs have come back up
       shell: ansible -m ping all
