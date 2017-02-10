@@ -24,7 +24,7 @@
     - name: copy kargo ssh keys
       copy:
         src: "{{item}}"
-        dest: "/home/vagrant/{{item}}/.ssh"
+        dest: "/home/vagrant/.ssh/{{item}}"
         mode: 0400
       with_items:
         - kargo-test.priv
