@@ -633,7 +633,7 @@ end
   ##### DEFINE VM for k8s1 #####
   config.vm.define "k8s1" do |device|
     device.vm.hostname = "k8s1"
-    device.vm.box = ""
+    device.vm.box = "yk0/ubuntu-xenial"
 
     device.vm.provider :libvirt do |v|
       v.nested = true
