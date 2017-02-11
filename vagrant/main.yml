@@ -1,4 +1,4 @@
----
+>`---
 - hosts: all
   tasks:
     - name: install README.md.oob-mgmt-server
@@ -51,7 +51,7 @@
     - name: check if oob-mgmt switch is installed
       shell: "vagrant status | grep oob-mgmt-switch | grep running"
       register: mgmt_switch_installed
-      failed_when: "mgmt_switch.rc > 100"
+      failed_when: "mgmt_switch_installed.rc > 100"
 
     - name: start up oob mgmt switch
       command: vagrant up oob-mgmt-switch
