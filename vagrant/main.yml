@@ -48,15 +48,21 @@
         delay: 10
       when: copied_keys.changed == True
 
-    # TODO check that  oob-mgmt switch is up
-    #
+    - name: check if oob-mgmt switch is installed
+      shell: "vagrant status | grep oob-mgmt-switch | grep running"
+      register: mgmt_switch_installed
+
     - name: start up oob mgmt switch
       command: vagrant up oob-mgmt-switch
+      when: mgmt_switch_installed.rc == 1
 
-    # TODO check that the remaining VMs are up
+    - name: check if all the VMs are up
+      shell: vagrant status | awk '/running/'  | wc -l
+      register: num_of_running_vms
+
     - name: startup the remaining VMs
       command: vagrant up k8s1 k8s2 k8s3 leaf1 leaf2 spine1
-
+      when: num_of_running_vms.stdout == "8"
 
 - hosts: all
   tasks:
