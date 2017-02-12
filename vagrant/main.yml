@@ -105,12 +105,12 @@
 
     # only do this if the playbook was executed successfully
     - name: check that servers have come back up
-      shell: ansible -m ping all
+      shell: ansible -m ping host
       args:
         chdir: /home/vagrant/k8s-l3-clos
       register: task_result
       until: task_result.rc == 0
-      retries: 4
+      retries: 6
       delay: 10
       changed_when: false
 
