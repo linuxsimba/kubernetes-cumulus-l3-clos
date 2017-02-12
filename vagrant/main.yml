@@ -52,6 +52,7 @@
       shell: "vagrant status | grep oob-mgmt-switch | grep running"
       register: mgmt_switch_installed
       failed_when: "mgmt_switch_installed.rc > 100"
+      changed_when: false
 
     - name: start up oob mgmt switch
       command: vagrant up oob-mgmt-switch
@@ -61,6 +62,7 @@
       shell: vagrant status | awk '/running/'  | wc -l
       register: num_of_running_vms
       failed_when: "num_of_running_vms.rc > 100"
+      changed_when: false
 
     # Ansible int filter not working as expected  Issues #4170
     - name: startup the remaining VMs
@@ -79,6 +81,7 @@
       until: task_result.rc == 0
       retries: 4
       delay: 10
+      changed_when: false
 
     # TODO: Check if playbook is installed on the switches..
     - name: run l3-clos install on the switches
@@ -89,10 +92,14 @@
     #TODO: check if quagga is installed on the servers
     - name: run router on a host setup on the hosts
       shell: ansible-playbook playbooks/site.yml -l host
+      args:
+        chdir: /home/vagrant/k8s-l3-clos
 
     # TODO only do this if the playbook executed succesfully
     - name: reboot all k8s hosts
       shell: ansible -m shell -a "(sleep 5; reboot)&" -l host
+      args:
+        chdir: /home/vagrant/k8s-l3-clos
 
     # only do this if the playbook was executed successfully
     - name: check that servers have come back up
@@ -103,9 +110,12 @@
       until: task_result.rc == 0
       retries: 4
       delay: 10
+      changed_when: false
 
     # check if kubernetes is installed
     - name: install k8s using kargo
       shell: ansible-playbook cluster.yml
+      args:
+        chdir: /home/vagrant/kargo
 
     - debug: msg="type vagrant ssh oob-mgmt-server. follow instructions in README.md on the server"
