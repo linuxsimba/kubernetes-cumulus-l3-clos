@@ -27,7 +27,7 @@ Kuberneters + Cumulus L3 to the Host (Router on a Host) integration.
 ```
 vagrant plugin install vagrant-cumulus
 ```
-* Run ``vagrant up`` to  install the VMs. The VM will automatically download the correct box image from [atlas.hashicorp.com](atlas.hashicorp.com)
+* Run ``./install.sh`` to  install the VMs. The VM will automatically download the correct box image from [atlas.hashicorp.com](atlas.hashicorp.com)
 * Vagrant provisioning will install this repo and [Kargo](https://github.com/kubernetes-incubator/kargo) and deploy Kubernetes the servers.
 
 ### Libvirt
@@ -40,7 +40,7 @@ vagrant plugin install vagrant-cumulus
 vagrant plugin install vagrant-libvirt
 vagrant plugin install vagrant-cumulus
 ```
-* Run ``vagrant up`` to  install the VMs. The VM will automatically download the correct box image from [atlas.hashicorp.com](atlas.hashicorp.com)
+* Run ``./install.sh`` to  install the VMs. The VM will automatically download the correct box image from [atlas.hashicorp.com](atlas.hashicorp.com)
 * Vagrant provisioning will install this repo and [Kargo](https://github.com/kubernetes-incubator/kargo) and deploy Kubernetes the servers.
 
 
