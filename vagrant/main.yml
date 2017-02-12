@@ -60,7 +60,7 @@
     - name: check if all the VMs are up
       shell: vagrant status | awk '/running/'  | wc -l
       register: num_of_running_vms
-      failed_when: "number_of_running_vms.rc > 100"
+      failed_when: "num_of_running_vms.rc > 100"
 
 
     - name: startup the remaining VMs
