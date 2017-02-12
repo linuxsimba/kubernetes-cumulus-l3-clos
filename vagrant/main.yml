@@ -62,16 +62,14 @@
       register: num_of_running_vms
       failed_when: "num_of_running_vms.rc > 100"
 
-
     - name: startup the remaining VMs
       command: vagrant up k8s1 k8s2 k8s3 leaf1 leaf2 spine1
-      when: num_of_running_vms.stdout == "8"
+      when: num_of_running_vms.stdout|int < 8
 
 - hosts: all
   tasks:
     - pause: seconds=8
 
-    # This is not working!!! Look is not working
     - name: check that server and switch VMs have come back up
       shell: ansible -m ping all
       args:
@@ -81,17 +79,17 @@
       retries: 4
       delay: 10
 
-    # Check if playbook is installed on the switches..
+    # TODO: Check if playbook is installed on the switches..
     - name: run l3-clos install on the switches
       shell: ansible-playbook playbooks/site.yml -l switches
       args:
         chdir: /home/vagrant/k8s-l3-clos
 
-    # check if quagga is installed on the servers
+    #TODO: check if quagga is installed on the servers
     - name: run router on a host setup on the hosts
       shell: ansible-playbook playbooks/site.yml -l host
 
-    # only do this if the playbook executed succesfully
+    # TODO only do this if the playbook executed succesfully
     - name: reboot all k8s hosts
       shell: ansible -m shell -a "(sleep 5; reboot)&" -l host
 
