@@ -9,7 +9,7 @@ application for Kubernetes. Example
 
 ```
 oob-mgmt-server$ ssh -i $HOME/.ssh/kargo-test k8s1
-k8s1$ kubectl node
+k8s1$ kubectl get node
 
 ```
 
