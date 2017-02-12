@@ -34,6 +34,7 @@ vagrant plugin install vagrant-cumulus
 
 * Install [Vagrant](https://vagrantup.com) and [vagrant-libvirt version](https://github.com/vagrant-libvirt/") v0.39.1. Install vagrant 1.8.7. Vagrant 1.9+ has bugs.
 * change to the `./vagrant directory`
+* Make sure no other KVM instances created by Vagrant. There could be a UDP port conflict that causes the VMs to fail.
 * Install any missing vagrant plugins
 
 ```
