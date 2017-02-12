@@ -97,7 +97,7 @@
 
     # TODO only do this if the playbook executed succesfully
     - name: reboot all k8s hosts
-      shell: ansible -m shell -a "(sleep 5; reboot)&" -l host
+      shell: ansible -b -m shell -a "(sleep 5; reboot)&" -l host
       args:
         chdir: /home/vagrant/k8s-l3-clos
 
