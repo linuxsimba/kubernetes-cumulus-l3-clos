@@ -105,7 +105,7 @@
     - name: check that servers have come back up
       shell: ansible -m ping all
       args:
-        chdir: /home/vagrant/k8s
+        chdir: /home/vagrant/k8s-l3-clos
       register: task_result
       until: task_result.rc == 0
       retries: 4
