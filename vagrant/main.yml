@@ -101,6 +101,8 @@
       args:
         chdir: /home/vagrant/k8s-l3-clos
 
+    - pause: seconds=8
+
     # only do this if the playbook was executed successfully
     - name: check that servers have come back up
       shell: ansible -m ping all
