@@ -45,3 +45,12 @@ vagrant plugin install vagrant-cumulus
 * Vagrant provisioning will install this repo and [Kargo](https://github.com/kubernetes-incubator/kargo) and deploy Kubernetes the servers.
 
 
+### Reinstalling Kubernetes
+
+In case you mess up the Kubernetes setup, do the following to restore a pristine setup
+
+```
+cd ./vagrant
+vagrant destroy k8s1 k8s2 k8s3
+./install.sh
+```
