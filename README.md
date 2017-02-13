@@ -27,6 +27,10 @@ Kuberneters + Cumulus L3 to the Host (Router on a Host) integration.
 ```
 vagrant plugin install vagrant-cumulus
 ```
+* Symlink Vagrantfile.vbox to Vagrantfile
+```
+ln -s Vagrantbox.vbox Vagrantfile
+```
 * Run ``./install.sh`` to  install the VMs. The VM will automatically download the correct box image from [atlas.hashicorp.com](atlas.hashicorp.com)
 * Vagrant provisioning will install this repo and [Kargo](https://github.com/kubernetes-incubator/kargo) and deploy Kubernetes the servers.
 
@@ -41,6 +45,10 @@ vagrant plugin install vagrant-cumulus
 vagrant plugin install vagrant-libvirt
 vagrant plugin install vagrant-cumulus
 ```
+* Symlink Vagrantfile.vbox to Vagrantfile
+```
+ln -s Vagrantbox.vbox Vagrantfile
+```
 * Run ``./install.sh`` to  install the VMs. The VM will automatically download the correct box image from [atlas.hashicorp.com](atlas.hashicorp.com)
 * Vagrant provisioning will install this repo and [Kargo](https://github.com/kubernetes-incubator/kargo) and deploy Kubernetes the servers.
 
@@ -52,5 +60,5 @@ In case you mess up the Kubernetes setup, do the following to restore a pristine
 ```
 cd ./vagrant
 vagrant destroy k8s1 k8s2 k8s3
-./install.sh
+./provision.sh
 ```
