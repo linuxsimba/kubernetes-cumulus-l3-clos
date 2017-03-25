@@ -1,0 +1,2 @@
+- name: reload l2
+  command: ifreload -a

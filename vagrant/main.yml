@@ -10,12 +10,12 @@
     - name: git clone kargo
       git:
         repo: "https://github.com/linuxsimba/kargo"
-        version: 1s2l3s-setup
+        version: 1s2l3s-setup-weave
         dest: /home/vagrant/kargo
     - name: git clone kubernetes l3-clos repo
       git:
         repo: "https://github.com/linuxsimba/kubernetes-cumulus-l3-clos"
-        version: roh-ifupdown2-1s2l3s
+        version: weave
         dest: /home/vagrant/k8s-l3-clos
 
     - name: create ssh key
@@ -114,10 +114,16 @@
       delay: 10
       changed_when: false
 
+    - name: copy inventory hosts from infra setup to kubernetes repo
+      copy:
+        src: /home/vagrant/k8s-l3-clos/inventory/hosts
+        dest: /home/vagrant/kargo/inventory/hosts
+
     # check if kubernetes is installed
     - name: install k8s using kargo
       shell: ansible-playbook cluster.yml
       args:
         chdir: /home/vagrant/kargo
+
 
     - debug: msg="type vagrant ssh oob-mgmt-server. follow instructions in README.md on the server"

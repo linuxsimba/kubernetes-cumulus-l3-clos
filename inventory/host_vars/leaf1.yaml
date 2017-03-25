@@ -1,3 +1,6 @@
-bgp_managed_ports:
+tor_network: 10.100.1.0/24
+tor_ip: 10.100.1.254/24
+tor_interfaces:
   - swp1
+bgp_managed_ports:
   - swp32
