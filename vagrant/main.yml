@@ -117,6 +117,13 @@
       copy:
         src: /home/vagrant/k8s-l3-clos/inventory/hosts
         dest: /home/vagrant/kargo/inventory/hosts
+        remote_src: yes
+
+    - name: change kargo network cni plugin to weave
+      lineinfile:
+        dest: '/home/vagrant/kargo/inventory/group_vars/k8s-cluster.yml'
+        regexp: '^kube_network_plugin:'
+        line: 'kube_network_plugin: weave'
 
     # check if kubernetes is installed
     - name: install k8s using kargo

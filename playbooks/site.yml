@@ -1,12 +1,12 @@
 ---
 - hosts: spine
   roles:
-    - { role: l3-clos, tags: ['l3-clos'] }
+    - { role: l3-clos, tags: ['spine'] }
 
 - hosts: leaf
   roles:
-    - { role: tor, tags: ['l3-leaf-spine'] }
+    - { role: tor, tags: ['leaf'] }
 
 - hosts: host
   roles:
-    - { role: regular-l2, tags: ['roh'] }
+    - { role: host-l2-to-tor, tags: ['l2-to-tor'] }

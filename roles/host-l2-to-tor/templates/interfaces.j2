@@ -7,8 +7,8 @@ iface eth0 inet dhcp
 auto eth1
 iface eth1
   address {{ tor_facing_ip }}
-  up ip addr add 0.0.0.0/0 via {{ tor_gw }}
-  down ip addr del 0.0.0.0/0 via {{ tor_gw }}
+  up ip route add 10.0.0.0/8 via {{ tor_gw }}
+  down ip route del 10.0.0.0/8  via {{ tor_gw }}
 
 auto vagrant
 iface vagrant
