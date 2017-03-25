@@ -1,0 +1,15 @@
+- name: configure l2 interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload l2
+
+
+- name: install pip
+  apt: name=python-pip
+
+- name: install netshow for troubleshooting
+  pip: name=netshow-linux-lib

@@ -1,0 +1,23 @@
+# prefix with prefix mask of the single L2 network supported on the TOR
+# Example: 10.1.1.1/24. If not defined the playbook will fail to run.
+# tor_network: ''
+
+# List of L2 interfaces in the single L2 TOR network
+#tor_interfaces: []
+# Define a list of ports that are managed by BGP. These ports
+# connect to other BGP enabled devices. Example ['swp1','swp2','swp3']
+#bgp_managed_ports: []
+
+# prefix of the spine switches. covers 254 devices. override if needed
+# used to determine the loopback ip of the spine switch
+spine_prefix: 10.1.2
+# prefix for leaf switches. covers 254 devices. override if needed
+# used to determine the loopback ip of the leaf switch
+leaf_prefix: 10.1.1
+
+# leaf ASN starting point. add asn from here.
+leaf_asn_start: 65100
+
+# spine ASN starting point
+spine_asn_start: 65500
+

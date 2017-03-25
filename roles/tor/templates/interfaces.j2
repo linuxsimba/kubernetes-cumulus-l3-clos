@@ -1,0 +1,28 @@
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+  vrf mgmt
+
+auto mgmt
+iface mgmt
+  address 127.0.0.1/8
+  vrf-table auto
+
+auto k8s
+iface k8s
+  vrf-table auto
+  address {{ loopback_ip }}/32
+
+{% for iface in bgp_managed_ports %}
+auto {{ iface }}
+iface {{ iface }}
+  vrf k8s
+{% endfor %}
+
+auto toriface
+iface toriface
+  vrf k8s
+  bridge-ports {{ tor_interfaces|join(' ') }}
+  address {{ tor_ip }}

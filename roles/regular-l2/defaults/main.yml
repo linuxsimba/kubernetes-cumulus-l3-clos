@@ -1,0 +1,8 @@
+# IP address and prefix mask to assign to the host interface facing to the TOR
+# Example: 10.1.1.1/24
+# tor_facing_ip: ''
+#
+# Gateway IP for the top of rack switch (TOR)
+# Example: 10.1.1.254
+# tor_gw: ''
+
