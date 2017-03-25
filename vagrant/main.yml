@@ -10,7 +10,7 @@
     - name: git clone kargo
       git:
         repo: "https://github.com/linuxsimba/kargo"
-        version: 1s2l3s-setup-weave
+        version: 1s2l3s-setup
         dest: /home/vagrant/kargo
     - name: git clone kubernetes l3-clos repo
       git:
@@ -84,13 +84,12 @@
       changed_when: false
 
     # TODO: Check if playbook is installed on the switches..
-    - name: run l3-clos install on the switches
+    - name: install switch config
       shell: ansible-playbook playbooks/site.yml -l switches
       args:
         chdir: /home/vagrant/k8s-l3-clos
 
-    #TODO: check if quagga is installed on the servers
-    - name: run router on a host setup on the hosts
+    - name: install host config
       shell: ansible-playbook playbooks/site.yml -l host
       args:
         chdir: /home/vagrant/k8s-l3-clos
