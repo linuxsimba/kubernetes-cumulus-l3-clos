@@ -26,3 +26,5 @@ iface toriface
   vrf k8s
   bridge-ports {{ tor_interfaces|join(' ') }}
   address {{ tor_ip }}
+  bridge-mcquerier 1
+  bridge-mcqifaddr 1
