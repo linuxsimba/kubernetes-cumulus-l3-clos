@@ -14,3 +14,4 @@ retry_stagger: 5
 
 docker_bin_dir: "/usr/bin"
 
+tor_agg_route: 10.100.0.0/22

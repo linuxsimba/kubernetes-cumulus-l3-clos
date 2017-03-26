@@ -5,4 +5,7 @@
 # Gateway IP for the top of rack switch (TOR)
 # Example: 10.1.1.254
 # tor_gw: ''
+#
+# Aggregate route that covers all TOR L2 networks
+# tor_agg_route: 10.100.0.0/22
 
