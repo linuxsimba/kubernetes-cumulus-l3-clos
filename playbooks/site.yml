@@ -10,3 +10,16 @@
 - hosts: host
   roles:
     - { role: host-l2-to-tor, tags: ['l2-to-tor'] }
+
+
+- hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: pause for 5 seconds
+      pause: seconds=5
+      when: check_route.failed is defined
+
+    - name: wait for host to come back online
+      local_action: wait_for port=22 host="{{ ansible_ssh_host }}" delay=10
+      when: check_route.failed is defined

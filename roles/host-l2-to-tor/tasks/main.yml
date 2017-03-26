@@ -13,3 +13,14 @@
 
 - name: install netshow for troubleshooting
   pip: name=netshow-linux-lib
+
+- name: check if default route exists
+  prefix_check: prefix="0.0.0.0/0"
+  ignore_errors: yes
+  register: check_route
+
+- name: reboot the server
+  shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+  poll: 0
+  async: 1
+  become: true
